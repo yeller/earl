@@ -2,6 +2,8 @@
 
 A clojure project that lets you visually inspect running [ordasity](github.com/boundary.ordasity) clusters
 
+![earl](http://cl.ly/image/420n0P1T3Q1r/Image%202014-03-25%20at%2010.01.29%20PM.png)
+
 ## Usage
 
 grab an uberjar, then run it:
