@@ -5,7 +5,7 @@
             [net.cgrand.enlive-html :as html]
             [earl.cluster-state :as cluster-state]))
 
-(html/defsnippet cluster-name-snippet "index.html"
+(html/defsnippet cluster-name-snippet "public/index.html"
   [:div.col-sm-4 :ul]
   [active-cluster clusters]
   [[:li html/last-of-type]] nil
@@ -23,7 +23,7 @@
     (* 100
     (float (/ my-load total-workload)))))
 
-(html/defsnippet node-snippet "index.html"
+(html/defsnippet node-snippet "public/index.html"
   [:div.nodes-workloads]
   [nodes]
   [:div.node-workload] (html/clone-for [[node-name my-load] nodes]
@@ -35,7 +35,7 @@
                                        [:div.progress-bar :span]
                                        (html/content (str (percentage-workload my-load nodes) "%"))))
 
-(html/defsnippet work-unit-state-snippet "index.html"
+(html/defsnippet work-unit-state-snippet "public/index.html"
   [:tbody.work-unit-states]
   [state config]
   [:tr.work-unit-state] (html/clone-for [[work-unit-name {:keys [load node]}] (sort-by (comp :load second) (:work-units state))]
@@ -43,7 +43,7 @@
                                         [:td.work-unit-node] (html/content node)
                                         [:td.work-unit-load] (html/content (str load))))
 
-(html/deftemplate cluster-state-page "index.html"
+(html/deftemplate cluster-state-page "public/index.html"
   [state config]
   [:title] (html/content (str (:earl/brand config) " Cluster Management"))
   [:a.brand-title] (html/content (str (:earl/brand config) " Cluster Management"))
