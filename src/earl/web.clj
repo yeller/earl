@@ -1,9 +1,15 @@
 (ns earl.web
-  (:require [compojure.core :refer :all]
+  (:gen-class)
+  (:require clojure.java.io
+            [clojure.edn :as edn]
+            [ring.adapter.jetty :as jetty]
+            [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]
             [net.cgrand.enlive-html :as html]
             [earl.cluster-state :as cluster-state]))
+
+;; TODO: show unclaimed work units and alert on them
 
 (html/defsnippet cluster-name-snippet "public/index.html"
   [:div.col-sm-4 :ul]
@@ -57,12 +63,29 @@
 (defn earl-routes [client config]
   (handler/site
     (routes
-      (route/resources "/")
       (GET "/" [& params]
            (reduce str (cluster-state-page (cluster-state/get-state client (first (:earl/clusters config))) config)))
 
       (GET "/:cluster-name" [& params]
            (try
              (reduce str (cluster-state-page (cluster-state/get-state client (:cluster-name params)) config))
-             (catch org.apache.zookeeper.KeeperException$NoNodeException e nil))))))
+             (catch org.apache.zookeeper.KeeperException$NoNodeException e
+               (println "cluster not found " (:cluster-name params))
+               (.printStackTrace e)
+               nil)))
+      (route/resources "/"))))
 
+(defn read-config-file [filename]
+  (with-open [r (java.io.PushbackReader.
+                  (clojure.java.io/reader filename))]
+    (binding [*read-eval* false]
+      (edn/read r))))
+
+(defn -main [& args]
+  (if (empty? args)
+    (do
+      (println "usage: java -jar earl.jar config-file")
+      (System/exit 1)))
+  (let [config (read-config-file (first args))
+        client (cluster-state/connect-client (:zookeeper-cluster config "localhost:2181"))]
+    (jetty/run-jetty (earl-routes client config) (:jetty-options config {:port 8080}))))
