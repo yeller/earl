@@ -47,6 +47,7 @@
   [state config]
   [:title] (html/content (str (:earl/brand config) " Cluster Management"))
   [:a.brand-title] (html/content (str (:earl/brand config) " Cluster Management"))
+  [:p.navbar-text] (html/content (:earl/quote config "Riding in the city and knocking out in the Starbucks"))
   [:span.brand-name] (html/content (:earl/brand config))
   [:span.cluster-name] (html/content (:cluster-name state))
   [:div.col-sm-4] (html/content (cluster-name-snippet (:cluster-name state) (:earl/clusters config)))
@@ -56,19 +57,19 @@
 (def config
   {:earl/brand "Yeller"
    :earl/clusters
-   #{"Yeller-Production" "YellerDev"}})
+   #{"Yeller-Production" "YellerDev"}
+   :earl/quote
+   "2012 quality"})
 
 (defn earl-routes [client]
-  (routes
-    (route/resources "/")
-    (GET "/" [& params]
-         (reduce str (cluster-state-page (cluster-state/get-state client (first (:earl/clusters config))) config)))
+  (handler/site
+    (routes
+      (route/resources "/")
+      (GET "/" [& params]
+           (reduce str (cluster-state-page (cluster-state/get-state client (first (:earl/clusters config))) config)))
 
-    (GET "/:cluster-name" [& params]
-         (try
-         (reduce str (cluster-state-page (cluster-state/get-state client (:cluster-name params)) config))
-           (catch org.apache.zookeeper.KeeperException$NoNodeException e nil)))))
+      (GET "/:cluster-name" [& params]
+           (try
+             (reduce str (cluster-state-page (cluster-state/get-state client (:cluster-name params)) config))
+             (catch org.apache.zookeeper.KeeperException$NoNodeException e nil))))))
 
-(defonce zk-client (cluster-state/connect-client "localhost:2181"))
-
-(def handler (handler/site (earl-routes zk-client)))

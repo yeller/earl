@@ -8,6 +8,6 @@
                  [ring "1.2.0"]
                  [compojure "1.1.5"]
                  [org.apache.curator/curator-framework "2.4.1"]]
-  :ring {:handler earl.web/handler}
-  :profiles {:dev {:plugins [[lein-ring  "0.8.10"]]}
-             :ring {:handler earl.web/handler}})
+  :ring {:handler earl.dev/handler}
+  :profiles {:dev {:plugins [[lein-ring  "0.8.10"]]
+                   :source-paths ["src" "dev"]}})
