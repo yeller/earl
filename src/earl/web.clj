@@ -64,7 +64,12 @@
   (handler/site
     (routes
       (GET "/" [& params]
-           (reduce str (cluster-state-page (cluster-state/get-state client (first (:earl/clusters config))) config)))
+           (try
+             (reduce str (cluster-state-page (cluster-state/get-state client (first (:earl/clusters config))) config))
+             (catch org.apache.zookeeper.KeeperException$NoNodeException e
+               (.printStackTrace e)
+               (println "cluster not found " (first (:earl/clusters config)))
+               nil)))
 
       (GET "/:cluster-name" [& params]
            (try
