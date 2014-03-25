@@ -54,14 +54,7 @@
   [:div.nodes-workloads] (html/content (node-snippet (:load-distribution state)))
   [:tbody.work-unit-states] (html/content (work-unit-state-snippet state config)))
 
-(def config
-  {:earl/brand "Yeller"
-   :earl/clusters
-   #{"Yeller-Production" "YellerDev"}
-   :earl/quote
-   "2012 quality"})
-
-(defn earl-routes [client]
+(defn earl-routes [client config]
   (handler/site
     (routes
       (route/resources "/")
