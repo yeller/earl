@@ -44,7 +44,7 @@
 (html/defsnippet work-unit-state-snippet "public/index.html"
   [:tbody.work-unit-states]
   [state config]
-  [:tr.work-unit-state] (html/clone-for [[work-unit-name {:keys [load node]}] (sort-by (comp :load second) (:work-units state))]
+  [:tr.work-unit-state] (html/clone-for [[work-unit-name {:keys [load node]}] (reverse (sort-by (comp :load second) (:work-units state)))]
                                         [:td.work-unit-name] (html/content work-unit-name)
                                         [:td.work-unit-node] (html/content node)
                                         [:td.work-unit-load] (html/content (str load))))
