@@ -42,11 +42,14 @@
   "returns a map like this:
   {:load-distributions
    {\"node-name\" my-load}
+  :cluster-name \"MyCluster\"
    :work-units
    {\"work-unit-name\" {:load 0.5 :node \"node-name\"}}}"
   [client cluster-name]
   {:load-distribution
    (get-load-distribution client cluster-name)
+   :cluster-name
+   cluster-name
    :work-units
    (get-work-units client cluster-name)})
 
