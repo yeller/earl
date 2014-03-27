@@ -9,7 +9,7 @@
 (def config
   {:earl/brand "Yeller"
    :earl/clusters
-   #{"Yeller-Production" "YellerDev"}
+   {"Yeller-Production" "work-units" "YellerDev" "work-units"}
    :earl/quote
    "2012 quality"})
 
