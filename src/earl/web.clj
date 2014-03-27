@@ -100,6 +100,14 @@
     (binding [*read-eval* false]
       (edn/read r))))
 
+(defn wrap-error-page [handler]
+  (fn [req]
+    (try (handler req)
+      (catch Exception e
+        (.printStackTrace e)
+        {:status 500
+         :body "<body>Oops, ran into a problem, how embarrasing for an exception tracking site. We're working on it.</body>"}))))
+
 (defn -main [& args]
   (if (empty? args)
     (do
@@ -107,4 +115,4 @@
       (System/exit 1)))
   (let [config (read-config-file (first args))
         client (cluster-state/connect-client (:zookeeper-cluster config "localhost:2181"))]
-    (jetty/run-jetty (earl-routes client config) (:jetty-options config {:port 8080}))))
+    (jetty/run-jetty (wrap-error-page (earl-routes client config)) (:jetty-options config {:port 8080}))))
