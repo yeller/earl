@@ -68,8 +68,9 @@
             </div>
           </div>
           <div class="panel panel-default">
-            <div class="panel-heading">Work Units</div>
+            <div class="panel-heading">Claimed Work Units</div>
             <div class="panel-body">
+              <p>These are all the work units being actively worked on in this cluster</p>
               <table class="table">
                 <thead>
                   <tr>
@@ -83,6 +84,26 @@
                     <td class="work-unit-name">bars-16</td>
                     <td class="work-unit-node">vince.staples.com</td>
                     <td class="work-unit-load">0.4</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel panel-danger unassigned-work-units">
+            <div class="panel-heading">Unclaimed Work Units</div>
+            <div class="panel-body">
+              <p class="unclaimed-work-unit-description">These are all the work units that are currently not being worked on.
+                Likely they'll be claimed soon
+              </p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                  </tr>
+                </thead>
+                <tbody class="unassigned-work-units">
+                  <tr class="unassigned-work-unit">
+                    <td class="work-unit-name">bars-16</td>
                   </tr>
                 </tbody>
               </table>

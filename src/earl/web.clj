@@ -43,11 +43,24 @@
 
 (html/defsnippet work-unit-state-snippet "public/index.html"
   [:tbody.work-unit-states]
-  [state config]
+  [state]
   [:tr.work-unit-state] (html/clone-for [[work-unit-name {:keys [load node]}] (reverse (sort-by (comp :load second) (:work-units state)))]
                                         [:td.work-unit-name] (html/content work-unit-name)
                                         [:td.work-unit-node] (html/content node)
                                         [:td.work-unit-load] (html/content (str load))))
+
+(html/defsnippet unassigned-work-unit-snippet "public/index.html"
+  [:div.panel.unassigned-work-units :div.panel-body]
+  [state]
+  [:tbody.unassigned-work-units :tr.unassigned-work-unit]
+  (if (empty? (:unclaimed-work state))
+    nil
+    (html/clone-for [work-unit-name (sort (:unclaimed-work state))]
+                    [:td.work-unit-name] (html/content work-unit-name)))
+  [:p.unclaimed-work-unit-description]
+  (if (empty? (:unclaimed-work state))
+    (html/content "There are currently no unclaimed work units")
+    (html/content "These are all the work units that aren't being worked on. Likely they'll be claimed soon")))
 
 (html/deftemplate cluster-state-page "public/index.html"
   [state config]
@@ -58,7 +71,8 @@
   [:span.cluster-name] (html/content (:cluster-name state))
   [:div.left-nav] (html/content (cluster-name-snippet (:cluster-name state) (keys (:earl/clusters config))))
   [:div.nodes-workloads] (html/content (node-snippet (:load-distribution state)))
-  [:tbody.work-unit-states] (html/content (work-unit-state-snippet state config)))
+  [:tbody.work-unit-states] (html/content (work-unit-state-snippet state))
+  [:div.panel.unassigned-work-units :div.panel-body] (html/content (unassigned-work-unit-snippet state)))
 
 (defn earl-routes [client config]
   (handler/site
