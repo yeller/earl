@@ -1,7 +1,10 @@
 (ns earl.dev
   (:use earl.web)
   (:require [earl.web :refer :all]
-    [earl.cluster-state :as cluster-state]))
+            net.cgrand.reload
+            [earl.cluster-state :as cluster-state]))
+
+(net.cgrand.reload/auto-reload 'earl.web)
 
 (def config
   {:earl/brand "Yeller"
