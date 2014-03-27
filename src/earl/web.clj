@@ -106,7 +106,7 @@
       (catch Exception e
         (.printStackTrace e)
         {:status 500
-         :body "<body>Oops, ran into a problem, how embarrasing for an exception tracking site. We're working on it.</body>"}))))
+         :body "<body>HTTP 500. Look at the logs</body>"}))))
 
 (defn -main [& args]
   (if (empty? args)
