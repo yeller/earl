@@ -12,14 +12,14 @@
 ;; TODO: show unclaimed work units and alert on them
 
 (html/defsnippet cluster-name-snippet "public/index.html"
-  [:div.col-sm-4 :ul]
+  [:div.left-nav :ul]
   [active-cluster clusters]
   [[:li html/last-of-type]] nil
   [[:li html/last-of-type]] (html/clone-for [cluster-name (sort clusters)]
                                             [:li :a]
                                             (html/do->
                                               (html/content cluster-name)
-                                              (html/set-attr :href (str "/" cluster-name)))
+                                              (html/set-attr :href (str "/cluster/" cluster-name)))
                                             [:li] (html/set-attr :class (if (= active-cluster cluster-name) "active" ""))))
 
 (defn sum [xs] (reduce + xs))
@@ -56,7 +56,7 @@
   [:p.navbar-text] (html/content (:earl/quote config "Riding in the city and knocking out in the Starbucks"))
   [:span.brand-name] (html/content (:earl/brand config))
   [:span.cluster-name] (html/content (:cluster-name state))
-  [:div.col-sm-4] (html/content (cluster-name-snippet (:cluster-name state) (:earl/clusters config)))
+  [:div.left-nav] (html/content (cluster-name-snippet (:cluster-name state) (keys (:earl/clusters config))))
   [:div.nodes-workloads] (html/content (node-snippet (:load-distribution state)))
   [:tbody.work-unit-states] (html/content (work-unit-state-snippet state config)))
 
@@ -65,15 +65,15 @@
     (routes
       (GET "/" [& params]
            (try
-             (reduce str (cluster-state-page (cluster-state/get-state client (first (:earl/clusters config))) config))
+             (reduce str (cluster-state-page (cluster-state/get-state client config (first (:earl/clusters config))) config))
              (catch org.apache.zookeeper.KeeperException$NoNodeException e
                (.printStackTrace e)
                (println "cluster not found " (first (:earl/clusters config)))
                nil)))
 
-      (GET "/:cluster-name" [& params]
+      (GET "/cluster/:cluster-name" [& params]
            (try
-             (reduce str (cluster-state-page (cluster-state/get-state client (:cluster-name params)) config))
+             (reduce str (cluster-state-page (cluster-state/get-state client config (:cluster-name params)) config))
              (catch org.apache.zookeeper.KeeperException$NoNodeException e
                (println "cluster not found " (:cluster-name params))
                (.printStackTrace e)
