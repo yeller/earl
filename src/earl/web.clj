@@ -1,6 +1,7 @@
 (ns earl.web
   (:gen-class)
   (:require clojure.java.io
+            [clojure.data.json :as json]
             [clojure.edn :as edn]
             [ring.adapter.jetty :as jetty]
             [compojure.core :refer :all]
@@ -74,24 +75,30 @@
   [:tbody.work-unit-states] (html/content (work-unit-state-snippet state))
   [:div.panel.unassigned-work-units :div.panel-body] (html/content (unassigned-work-unit-snippet state)))
 
+(defn- json-request? [request]
+  (if-let [type (:content-type request)]
+    (not (empty? (re-find #"^application/(.+\+)?json" type)))))
+
+(defn show-cluster [client config cluster-name]
+  (try
+    (reduce str (cluster-state-page (cluster-state/get-state client config cluster-name) config))
+    (catch org.apache.zookeeper.KeeperException$NoNodeException e
+      (println "cluster not found " cluster-name)
+      (.printStackTrace e)
+      nil)))
+
 (defn earl-routes [client config]
   (handler/site
     (routes
-      (GET "/" [& params]
-           (try
-             (reduce str (cluster-state-page (cluster-state/get-state client config (first (:earl/clusters config))) config))
-             (catch org.apache.zookeeper.KeeperException$NoNodeException e
-               (.printStackTrace e)
-               (println "cluster not found " (first (:earl/clusters config)))
-               nil)))
+      (GET "/" req
+           (show-cluster client config (first (keys (:earl/clusters config)))))
 
-      (GET "/cluster/:cluster-name" [& params]
-           (try
-             (reduce str (cluster-state-page (cluster-state/get-state client config (:cluster-name params)) config))
-             (catch org.apache.zookeeper.KeeperException$NoNodeException e
-               (println "cluster not found " (:cluster-name params))
-               (.printStackTrace e)
-               nil)))
+      (GET "/cluster/:cluster-name" req
+           (let [cluster-name (:cluster-name (:params req))]
+             (if (json-request? req)
+               {:body (json/write-str (cluster-state/get-state client config cluster-name ))
+                :status 200}
+               (show-cluster client config cluster-name))))
       (route/resources "/"))))
 
 (defn read-config-file [filename]

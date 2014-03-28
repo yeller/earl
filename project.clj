@@ -7,6 +7,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [enlive "1.1.5"]
                  [ring "1.2.0"]
+                 [org.clojure/data.json  "0.2.4"]
                  [compojure "1.1.5"]
                  [org.apache.curator/curator-framework "2.4.1"]]
   :ring {:handler earl.dev/handler}
