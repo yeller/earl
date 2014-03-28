@@ -27,6 +27,10 @@ Config files are just edn files. An example:
 `:jetty-options` are optional (and are just passed raw to `run-jetty`). The default port is 8080.
 `:zookeeper-cluster` is likewise optional, defaulting to `localhost:2181`. They are passed directly to curator, so feel free to pass a comma separated connection string to connect to multiple zk servers
 
+## Extras
+
+There's a hubot plugin in `extras/earl_hubot.coffee`. It assumes your earl deployment is behind https basic auth (you shouldn't ever use http basic auth - passwords are sent in plain text)
+
 ## License
 
 Copyright © 2014 Tom Crayford
