@@ -1,6 +1,6 @@
 # earl
 
-A clojure project that lets you visually inspect running [ordasity](github.com/boundary.ordasity) clusters
+A clojure project that lets you visually inspect running [ordasity](https://github.com/boundary/ordasity) clusters
 
 ![earl](http://f.cl.ly/items/0z0L0V040y172G1t0A17/Image%202014-03-28%20at%203.11.30%20PM.png)
 
